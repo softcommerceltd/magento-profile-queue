@@ -1,0 +1,20 @@
+{
+    "name": "softcommerce/module-profile-queue",
+    "description": "SoftCommerce -- Magento: Profile Queue Module.",
+    "require": {
+        "php": "~7.4.0||~8.0.0||~8.1.0",
+        "magento/magento-composer-installer": "*",
+        "softcommerce/module-profile": "*"
+    },
+    "type": "magento2-module",
+    "license": "EULA",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "SoftCommerce\\ProfileQueue\\": ""
+        }
+    },
+    "version": "1.0.0"
+}
