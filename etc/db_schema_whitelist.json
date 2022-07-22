@@ -1,0 +1,13 @@
+{
+    "softcommerce_profile_queue": {
+        "column": {
+            "entity_id": true,
+            "type_id": true,
+            "metadata": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

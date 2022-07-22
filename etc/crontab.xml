@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Soft Commerce Ltd. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="softcommerce_profile_queue_cleanup" instance="SoftCommerce\ProfileQueue\Cron\Backend\QueueCleanup" method="execute">
+            <schedule>15 2 * * *</schedule>
+        </job>
+    </group>
+</config>

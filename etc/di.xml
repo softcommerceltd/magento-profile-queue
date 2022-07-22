@@ -7,13 +7,6 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- Queue entity ::: model interface ::: management interfaces -->
-    <preference for="SoftCommerce\FreeAgentProfile\Api\Data\QueueInterface" type="SoftCommerce\FreeAgentProfile\Model\Queue"/>
-    <preference for="SoftCommerce\FreeAgentProfile\Api\QueueManagementInterface" type="SoftCommerce\FreeAgentProfile\Model\QueueManagement"/>
-    <!-- profile ::: global interfaces -->
-    <preference for="SoftCommerce\FreeAgentProfile\Model\GetLastCollectedAtInterface" type="SoftCommerce\FreeAgentProfile\Model\GetLastCollectedAt"/>
-    <!-- profile type instance ::: configs -->
-    <preference for="SoftCommerce\FreeAgentProfile\Model\Config\ApiConfigInterface" type="SoftCommerce\FreeAgentProfile\Model\Config\ApiConfig"/>
-    <preference for="SoftCommerce\FreeAgentProfile\Model\Config\ClientConfigInterface" type="SoftCommerce\FreeAgentProfile\Model\Config\ClientConfig"/>
-    <preference for="SoftCommerce\FreeAgentProfile\Model\Config\GeneralInterface" type="SoftCommerce\FreeAgentProfile\Model\Config\General"/>
-    <preference for="SoftCommerce\FreeAgentProfile\Model\Config\StoreConfigInterface" type="SoftCommerce\FreeAgentProfile\Model\Config\StoreConfig"/>
+    <preference for="SoftCommerce\ProfileQueue\Api\Data\QueueInterface" type="SoftCommerce\ProfileQueue\Model\Queue"/>
+    <preference for="SoftCommerce\ProfileQueue\Api\QueueManagementInterface" type="SoftCommerce\ProfileQueue\Model\QueueManagement"/>
 </config>

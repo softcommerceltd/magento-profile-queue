@@ -19,24 +19,27 @@ interface QueueManagementInterface
     public const BATCH_LIMIT = 50;
 
     /**
+     * @param string $typeId
+     * @param int $batchSize
      * @return array
      * @throws LocalizedException
      */
-    public function getQueueBatches(): array;
+    public function getQueueBatches(string $typeId, int $batchSize = 0): array;
 
     /**
-     * @param int[] $variationId
+     * @param string $typeId
+     * @param string[]|int[]|array $metadata
      * @return int
      * @throws LocalizedException
      */
-    public function addToQueue(array $variationId): int;
+    public function addToQueue(string $typeId, array $metadata): int;
 
     /**
-     * @param int[] $entityId
+     * @param string $typeId
      * @return int
      * @throws LocalizedException
      */
-    public function removeFromQueue(array $entityId): int;
+    public function removeFromQueue(string $typeId): int;
 
     /**
      * @return void

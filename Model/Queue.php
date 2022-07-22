@@ -69,4 +69,12 @@ class Queue extends AbstractModel implements QueueInterface, IdentityInterface
     {
         return $this->getDataSerialized(self::METADATA);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCreatedAt(): ?string
+    {
+        return $this->getData(self::CREATED_AT);
+    }
 }

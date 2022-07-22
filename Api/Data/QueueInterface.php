@@ -19,6 +19,7 @@ interface QueueInterface
     public const ENTITY_ID = 'entity_id';
     public const TYPE_ID = 'type_id';
     public const METADATA = 'metadata';
+    public const CREATED_AT = 'created_at';
 
     /**
      * @return null|int
@@ -34,4 +35,9 @@ interface QueueInterface
      * @return array
      */
     public function getMetadata(): array;
+
+    /**
+     * @return string|null
+     */
+    public function getCreatedAt(): ?string;
 }
