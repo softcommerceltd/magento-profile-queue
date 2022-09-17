@@ -27,12 +27,12 @@ class QueueManagement implements QueueManagementInterface
     /**
      * @var AdapterInterface
      */
-    private $connection;
+    private AdapterInterface $connection;
 
     /**
      * @var SerializerInterface
      */
-    private $serializer;
+    private SerializerInterface $serializer;
 
     /**
      * @param ResourceConnection $resourceConnection
@@ -72,7 +72,7 @@ class QueueManagement implements QueueManagementInterface
     /**
      * @inheritDoc
      */
-    public function addToQueue(string $typeId, array $metadata): int
+    public function addToQueue(string $typeId, array $metadata, int $batchLimit = self::BATCH_LIMIT): int
     {
         $existingData = current($this->getQueueData($typeId, 1, Select::SQL_DESC)) ?: [];
         $existingId = $existingData[QueueInterface::ENTITY_ID] ?? null;
@@ -89,7 +89,7 @@ class QueueManagement implements QueueManagementInterface
 
         $metadata = array_unique($metadata);
         $result = 0;
-        foreach (array_chunk($metadata, self::BATCH_LIMIT) as $metadataBatch) {
+        foreach (array_chunk($metadata, $batchLimit) as $metadataBatch) {
             try {
                 $metadataBatch = $this->serializer->serialize($metadataBatch);
             } catch (\InvalidArgumentException $e) {

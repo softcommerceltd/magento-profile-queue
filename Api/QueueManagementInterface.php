@@ -29,10 +29,10 @@ interface QueueManagementInterface
     /**
      * @param string $typeId
      * @param string[]|int[]|array $metadata
+     * @param int $batchLimit
      * @return int
-     * @throws LocalizedException
      */
-    public function addToQueue(string $typeId, array $metadata): int;
+    public function addToQueue(string $typeId, array $metadata, int $batchLimit = self::BATCH_LIMIT): int;
 
     /**
      * @param string $typeId

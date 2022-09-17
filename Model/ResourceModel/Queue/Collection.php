@@ -10,6 +10,7 @@ namespace SoftCommerce\ProfileQueue\Model\ResourceModel\Queue;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
+use SoftCommerce\ProfileQueue\Model\Queue;
 use SoftCommerce\ProfileQueue\Model\ResourceModel;
 
 /**
@@ -18,7 +19,7 @@ use SoftCommerce\ProfileQueue\Model\ResourceModel;
 class Collection extends AbstractCollection
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $_idFieldName = QueueInterface::ENTITY_ID;
 
@@ -27,6 +28,6 @@ class Collection extends AbstractCollection
      */
     protected function _construct()
     {
-        $this->_init(QueueInterface::class, ResourceModel\Queue::class);
+        $this->_init(Queue::class, ResourceModel\Queue::class);
     }
 }

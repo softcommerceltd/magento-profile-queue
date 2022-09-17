@@ -4,7 +4,8 @@
             "entity_id": true,
             "type_id": true,
             "metadata": true,
-            "created_at": true
+            "created_at": true,
+            "updated_at": true
         },
         "constraint": {
             "PRIMARY": true

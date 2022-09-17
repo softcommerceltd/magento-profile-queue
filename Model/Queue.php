@@ -18,7 +18,7 @@ use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
  */
 class Queue extends AbstractModel implements QueueInterface, IdentityInterface
 {
-    const CACHE_TAG = self::DB_TABLE_NAME;
+    public const CACHE_TAG = self::DB_TABLE_NAME;
 
     /**
      * @var string
@@ -41,7 +41,7 @@ class Queue extends AbstractModel implements QueueInterface, IdentityInterface
     /**
      * @inheritDoc
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
     }
