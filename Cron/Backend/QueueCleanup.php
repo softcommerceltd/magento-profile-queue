@@ -51,7 +51,7 @@ class QueueCleanup
         $this->connection->delete(
             $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
             [
-                QueueInterface::CREATED_AT . ' < ?' => $this->connection->formatDate(
+                QueueInterface::UPDATED_AT . ' < ?' => $this->connection->formatDate(
                     $this->dateTime->gmtTimestamp() - self::HISTORY_LIFETIME
                 )
             ]

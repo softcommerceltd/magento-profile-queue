@@ -19,7 +19,7 @@ interface QueueInterface
     public const ENTITY_ID = 'entity_id';
     public const TYPE_ID = 'type_id';
     public const METADATA = 'metadata';
-    public const CREATED_AT = 'created_at';
+    public const UPDATED_AT = 'updated_at';
 
     /**
      * @return null|int
