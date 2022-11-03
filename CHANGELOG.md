@@ -1,5 +1,8 @@
 ## Changelog
 
+### Version 1.0.3
+- **Fix**: Added a fix to updated_at timestamp.
+
 ### Version 1.0.2
 - **Enhancement**: Added ability to specify batch size, when adding entries to queue.
 
