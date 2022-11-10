@@ -31,7 +31,7 @@ class Listing extends Collection
     /**
      * @var RequestInterface
      */
-    private $request;
+    private RequestInterface $request;
 
     /**
      * @param RequestInterface $request
