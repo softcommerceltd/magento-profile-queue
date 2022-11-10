@@ -31,17 +31,17 @@ abstract class AbstractMassAction extends Action
     /**
      * @var string
      */
-    protected $redirectUrl = '*/*/index';
+    protected string $redirectUrl = '*/*/index';
 
     /**
      * @var Filter
      */
-    protected $filter;
+    protected Filter $filter;
 
     /**
      * @var ListingFactory
      */
-    protected $collectionFactory;
+    protected ListingFactory $collectionFactory;
 
     /**
      * @param ListingFactory $collectionFactory

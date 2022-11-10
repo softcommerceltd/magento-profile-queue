@@ -1,5 +1,8 @@
 ## Changelog
 
+### Version 1.0.4
+- **Compatibility**: Compatibility with Magento [OS/AC] 2.4.5 and PHP 8.
+
 ### Version 1.0.3
 - **Fix**: Added a fix to updated_at timestamp.
 

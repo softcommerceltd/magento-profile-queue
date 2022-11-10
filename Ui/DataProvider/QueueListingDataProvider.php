@@ -25,7 +25,7 @@ class QueueListingDataProvider extends AbstractDataProvider
     /**
      * @var PoolInterface
      */
-    private $pool;
+    private PoolInterface $pool;
 
     /**
      * @param ListingFactory $listingFactory
