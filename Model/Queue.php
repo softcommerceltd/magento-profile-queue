@@ -10,7 +10,6 @@ namespace SoftCommerce\ProfileQueue\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
 use SoftCommerce\Core\Model\AbstractModel;
-use SoftCommerce\ProfileQueue\Model\ResourceModel;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
 
 /**
