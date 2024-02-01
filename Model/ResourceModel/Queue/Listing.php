@@ -14,6 +14,7 @@ use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\Serialize\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use SoftCommerce\Profile\Api\Data\ProfileInterface;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
@@ -24,8 +25,10 @@ use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
 class Listing extends Collection
 {
     private const FULLTEXT_SEARCH_FIELDS = [
-        QueueInterface::TYPE_ID,
-        QueueInterface::METADATA
+        QueueInterface::SUBJECT_ENTITY_ID,
+        QueueInterface::SUBJECT_TYPE_ID,
+        QueueInterface::METADATA,
+        QueueInterface::MESSAGE
     ];
 
     /**
@@ -34,6 +37,7 @@ class Listing extends Collection
     private RequestInterface $request;
 
     /**
+     * @param SerializerInterface $serializer
      * @param RequestInterface $request
      * @param EntityFactoryInterface $entityFactory
      * @param LoggerInterface $logger
@@ -43,6 +47,7 @@ class Listing extends Collection
      * @param AbstractDb|null $resource
      */
     public function __construct(
+        SerializerInterface $serializer,
         RequestInterface $request,
         EntityFactoryInterface $entityFactory,
         LoggerInterface $logger,
@@ -52,7 +57,15 @@ class Listing extends Collection
         AbstractDb $resource = null
     ) {
         $this->request = $request;
-        parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
+        parent::__construct(
+            $serializer,
+            $entityFactory,
+            $logger,
+            $fetchStrategy,
+            $eventManager,
+            $connection,
+            $resource
+        );
     }
 
     /**
@@ -61,9 +74,8 @@ class Listing extends Collection
      */
     public function addFullTextFilter(string $value)
     {
-        $fields = self::FULLTEXT_SEARCH_FIELDS;
         $whereCondition = '';
-        foreach ($fields as $key => $field) {
+        foreach (self::FULLTEXT_SEARCH_FIELDS as $key => $field) {
             $field = 'main_table.' . $field;
             $condition = $this->_getConditionSql(
                 $this->getConnection()->quoteIdentifier($field),
@@ -71,6 +83,7 @@ class Listing extends Collection
             );
             $whereCondition .= ($key === 0 ? '' : ' OR ') . $condition;
         }
+
         if ($whereCondition) {
             $this->getSelect()->where($whereCondition);
         }
@@ -86,7 +99,7 @@ class Listing extends Collection
         parent::_initSelect();
 
         if ($typeId = $this->request->getParam(ProfileInterface::TYPE_ID)) {
-            $this->getSelect()->where(QueueInterface::TYPE_ID . ' = ?', $typeId);
+            $this->getSelect()->where(QueueInterface::SUBJECT_TYPE_ID . ' = ?', $typeId);
         }
 
         return $this;

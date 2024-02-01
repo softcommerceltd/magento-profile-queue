@@ -35,6 +35,7 @@ class QueueListingDataProvider extends AbstractDataProvider
      * @param string $requestFieldName
      * @param array $meta
      * @param array $data
+     * @param string|null $profileTypeId
      */
     public function __construct(
         ListingFactory $listingFactory,
@@ -43,11 +44,16 @@ class QueueListingDataProvider extends AbstractDataProvider
         string $primaryFieldName,
         string $requestFieldName,
         array $meta = [],
-        array $data = []
+        array $data = [],
+        ?string $profileTypeId = null
     ) {
         $this->collection = $listingFactory->create();
         $this->pool = $pool;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
+
+        if ($profileTypeId) {
+            $this->collection->addFieldToFilter('main_table.subject_type_id', $profileTypeId);
+        }
     }
 
     /**

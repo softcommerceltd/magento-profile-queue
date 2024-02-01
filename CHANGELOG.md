@@ -1,5 +1,8 @@
 ## Changelog
 
+### Version 1.1.0
+- **Enhancement**: Changes to queue functionality [#1]
+
 ### Version 1.0.7
 - **Compatibility**: Add compatibility for Magento 2.4.6-p3 and Magento 2.4.7
 

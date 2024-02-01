@@ -69,20 +69,33 @@
         <column name="entity_id">
             <settings>
                 <filter>textRange</filter>
-                <label translate="true">Queue ID</label>
+                <label translate="true">Entity ID</label>
                 <sorting>desc</sorting>
             </settings>
         </column>
-        <column name="type_id">
+        <column name="subject_entity_id">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Subject ID</label>
+                <sorting>desc</sorting>
+            </settings>
+        </column>
+        <column name="subject_type_id">
             <settings>
                 <filter>text</filter>
-                <label translate="true">Type ID</label>
+                <label translate="true">Subject Type</label>
             </settings>
         </column>
         <column name="metadata" class="SoftCommerce\Core\Ui\Component\Listing\Columns\ModalContentRenderer" component="SoftCommerce_Core/js/grid/columns/column/modal-content">
             <settings>
                 <filter>text</filter>
                 <label translate="true">Metadata</label>
+            </settings>
+        </column>
+        <column name="message" class="SoftCommerce\Core\Ui\Component\Listing\Columns\ModalContentRenderer" component="SoftCommerce_Core/js/grid/columns/column/modal-content">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Message</label>
             </settings>
         </column>
         <column name="updated_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">

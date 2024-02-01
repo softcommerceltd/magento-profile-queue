@@ -10,6 +10,7 @@ namespace SoftCommerce\ProfileQueue\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
 use SoftCommerce\Core\Model\AbstractModel;
+use SoftCommerce\Core\Model\Source\StatusInterface;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
 
 /**
@@ -32,7 +33,7 @@ class Queue extends AbstractModel implements QueueInterface, IdentityInterface
     /**
      * @inheritDoc
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(ResourceModel\Queue::class);
     }
@@ -56,9 +57,34 @@ class Queue extends AbstractModel implements QueueInterface, IdentityInterface
     /**
      * @inheritDoc
      */
-    public function getTypeId(): string
+    public function getSubjectEntityId(): string
     {
-        return $this->getData(self::TYPE_ID);
+        return $this->getData(self::SUBJECT_ENTITY_ID);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSubjectTypeId(): string
+    {
+        return (string) $this->getData(self::SUBJECT_TYPE_ID);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStatus(): string
+    {
+        return (string) $this->getData(self::STATUS);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setStatus(string $status): static
+    {
+        $this->setData(self::STATUS, $status);
+        return $this;
     }
 
     /**
@@ -72,8 +98,51 @@ class Queue extends AbstractModel implements QueueInterface, IdentityInterface
     /**
      * @inheritDoc
      */
-    public function getCreatedAt(): ?string
+    public function setMetadata(array $data): static
     {
-        return $this->getData(self::CREATED_AT);
+        $this->setDataSerialized(self::METADATA, $data);
+        return $this;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function getMessage(): array
+    {
+        return $this->getDataSerialized(self::MESSAGE);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setMessage(array $message): static
+    {
+        $this->setDataSerialized(self::MESSAGE, $message);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUpdatedAt(): ?string
+    {
+        return $this->getData(self::UPDATED_AT);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isLocked(): bool
+    {
+        return $this->getOrigData(self::STATUS) === StatusInterface::PROCESSING;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isPending(): bool
+    {
+        return $this->getStatus() === StatusInterface::PENDING;
     }
 }

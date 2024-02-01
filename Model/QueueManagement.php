@@ -10,15 +10,10 @@ namespace SoftCommerce\ProfileQueue\Model;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\DB\Select;
 use Magento\Framework\Serialize\SerializerInterface;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
 use SoftCommerce\ProfileQueue\Api\QueueManagementInterface;
-use function array_chunk;
-use function array_merge;
-use function array_unique;
-use function current;
-
+use SoftCommerce\ProfileQueue\Model\ResourceModel\Queue as ResourceModel;
 /**
  * @inhertidoc
  */
@@ -30,109 +25,88 @@ class QueueManagement implements QueueManagementInterface
     private AdapterInterface $connection;
 
     /**
+     * @var ResourceModel
+     */
+    private ResourceModel $resourceModel;
+
+    /**
      * @var SerializerInterface
      */
     private SerializerInterface $serializer;
 
     /**
-     * @param ResourceConnection $resourceConnection
+     * @param ResourceModel $resourceModel
      * @param SerializerInterface $serializer
      */
     public function __construct(
-        ResourceConnection $resourceConnection,
+        ResourceModel $resourceModel,
+        // ResourceConnection $resourceConnection,
         SerializerInterface $serializer
     ) {
-        $this->connection = $resourceConnection->getConnection();
+        $this->resourceModel = $resourceModel;
+        $this->connection = $resourceModel->getConnection();
+        // $this->connection = $resourceConnection->getConnection();
         $this->serializer = $serializer;
     }
 
     /**
      * @inheritDoc
      */
-    public function getQueueBatches(string $typeId, int $batchSize = 0): array
+    public function addToQueue(
+        int|string $subjectId,
+        string $subjectTypeId,
+        array $metadata = [],
+        array $message = []
+    ): int
     {
-        $result = [];
-        foreach ($this->getQueueData($typeId) as $item) {
-            try {
-                $metadata = $this->serializer->unserialize($item[QueueInterface::METADATA] ?? '[]');
-            } catch (\InvalidArgumentException $e) {
-                $metadata = [];
-            }
+        $request = [
+            QueueInterface::SUBJECT_ENTITY_ID => $subjectId,
+            QueueInterface::SUBJECT_TYPE_ID => $subjectTypeId,
+            QueueInterface::METADATA => $this->serializer->serialize($metadata),
+            QueueInterface::MESSAGE => $this->serializer->serialize($message)
+        ];
 
-            foreach ($metadata as $value) {
-                $result[$value] = $value;
-            }
-        }
-
-        return $batchSize
-            ? array_chunk($result, $batchSize)
-            : $result;
+        return (int) $this->connection->insertOnDuplicate(
+            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+            $request
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function addToQueue(string $typeId, array $metadata, int $batchLimit = self::BATCH_LIMIT): int
-    {
-        $existingData = current($this->getQueueData($typeId, 1, Select::SQL_DESC)) ?: [];
-        $existingId = $existingData[QueueInterface::ENTITY_ID] ?? null;
-
-        if ($data = $existingData[QueueInterface::METADATA] ?? []) {
-            try {
-                $data = $this->serializer->unserialize($data);
-            } catch (\InvalidArgumentException $e) {
-                $data = [];
-            }
-
-            $metadata = array_merge($data, $metadata);
-        }
-
-        $metadata = array_unique($metadata);
-        $result = 0;
-        foreach (array_chunk($metadata, $batchLimit) as $metadataBatch) {
-            try {
-                $metadataBatch = $this->serializer->serialize($metadataBatch);
-            } catch (\InvalidArgumentException $e) {
-                $metadataBatch = [];
-            }
-
-            if (!$metadataBatch) {
-                continue;
-            }
-
-            if (null !== $existingId) {
-                $result += (int) $this->connection->update(
-                    $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
-                    [
-                        QueueInterface::TYPE_ID => $typeId,
-                        QueueInterface::METADATA => $metadataBatch
-                    ],
-                    [QueueInterface::ENTITY_ID . ' = ?' => $existingId]
-                );
-                $existingId = null;
-                continue;
-            }
-
-            $result += (int) $this->connection->insert(
-                $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
-                [
-                    QueueInterface::TYPE_ID => $typeId,
-                    QueueInterface::METADATA => $metadataBatch
-                ]
-            );
-        }
-
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function removeFromQueue(string $typeId): int
+    public function removeFromQueueByEntityId(array $entityIds): int
     {
         return (int) $this->connection->delete(
             $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
-            [QueueInterface::TYPE_ID . ' = ?' => $typeId]
+            [QueueInterface::ENTITY_ID . ' IN (?)' => $entityIds]
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function removeFromQueue(array|int|string $subjectEntityId, string $subjectTypeId): int
+    {
+        return (int) $this->connection->delete(
+            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+            [
+                QueueInterface::SUBJECT_TYPE_ID . ' IN (?)' => is_array($subjectEntityId)
+                    ? $subjectEntityId
+                    : [$subjectEntityId],
+                QueueInterface::SUBJECT_TYPE_ID . ' = ?' => $subjectTypeId
+            ]
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function removeFromQueueBySubjectTypeId(string $subjectTypeId): int
+    {
+        return (int) $this->connection->delete(
+            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+            [QueueInterface::SUBJECT_TYPE_ID . ' = ?' => $subjectTypeId]
         );
     }
 
@@ -147,25 +121,57 @@ class QueueManagement implements QueueManagementInterface
     }
 
     /**
-     * @param string $typeId
-     * @param int|null $limit
-     * @param string|null $sortOrder
-     * @return array
+     * @inheritDoc
      */
-    private function getQueueData(string $typeId, ?int $limit = null, ?string $sortOrder = null): array
+    public function updateQueueStatusByEntityId(array $entityIds, string $status): int
     {
-        $select = $this->connection->select()
-            ->from($this->connection->getTableName(QueueInterface::DB_TABLE_NAME))
-            ->where(QueueInterface::TYPE_ID . ' = ?', $typeId);
+        return (int) $this->connection->update(
+            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+            [QueueInterface::STATUS => $status],
+            [QueueInterface::ENTITY_ID . ' IN (?)' => $entityIds]
+        );
+    }
 
-        if (null !== $sortOrder) {
-            $select->order(QueueInterface::ENTITY_ID . " $sortOrder");
-        }
+    /**
+     * @inheritDoc
+     */
+    public function updateQueueStatusBySubjectEntityId(
+        int|string $subjectEntityId,
+        string $subjectTypeId,
+        string $status
+    ): int
+    {
+        return (int) $this->connection->update(
+            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+            [QueueInterface::STATUS => $status],
+            [
+                QueueInterface::SUBJECT_ENTITY_ID . ' = ?' => $subjectEntityId,
+                QueueInterface::SUBJECT_TYPE_ID . ' = ?' => $subjectTypeId
+            ]
+        );
+    }
 
-        if (null !== $limit) {
-            $select->limit($limit);
-        }
+    /**
+     * @inheritDoc
+     */
+    public function updateQueueData(array $bindData, array|string $where): int
+    {
+        return (int) $this->connection->update(
+            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+            $bindData,
+            $where
+        );
+    }
 
-        return $this->connection->fetchAll($select);
+    /**
+     * @inheritDoc
+     */
+    public function saveMultipleOnDuplicate(array $data, array $fields = []): int
+    {
+        return (int) $this->connection->insertOnDuplicate(
+            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+            $this->resourceModel->buildBatchDataForSave($data),
+            $fields
+        );
     }
 }

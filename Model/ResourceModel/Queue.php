@@ -19,7 +19,7 @@ class Queue extends AbstractResource
     /**
      * @inheritDoc
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init(QueueInterface::DB_TABLE_NAME, QueueInterface::ENTITY_ID);
     }
