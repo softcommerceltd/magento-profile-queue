@@ -1,5 +1,8 @@
 ## Changelog
 
+### Version 1.1.1
+- **Compatibility**: Introduced support for PHP 8.3
+
 ### Version 1.1.0
 - **Enhancement**: Changes to queue functionality [#1]
 

@@ -12,8 +12,10 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          name: "1.1.0"
-          tag_name: 1.1.0
-          body: "1.1.0"
+          name: 1.1.1 [CE|EE|ECE 2.4.0-2.4.7] 25 Apr 2024
+          tag_name: 1.1.1
+          body: |-
+            ### softcommerce/module-profile-queue [1.1.1]
+            - **Compatibility**: Introduced support for PHP 8.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
