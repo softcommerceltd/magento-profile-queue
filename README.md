@@ -1,8 +1,8 @@
 ## About
-Magento - PlentyMarkets Connector. Profile queue entity module.
+Magento - Profile queue entity module.
 
 ## Purpose
-Used to manage PlentyMarekts profile queue.
+Used to manage profile queue.
 
 ## Support
 Soft Commerce Ltd <br />
