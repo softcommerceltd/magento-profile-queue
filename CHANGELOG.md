@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2025-07-14
+### Changed
+- ## softcommerce/module-profile-queue [1.1.2] - **Enhancement**: Included `servicepoint` type to account for `pakshop` facility.
+
 ## [1.1.2] - 2023-11-13
 ### Changed
 - **Enhancement**: Included `servicepoint` type to account for `pakshop` facility.
