@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.4] - 2025-07-24
+### Changed
+- The metapackage release notes are now properly extracting and formatting the module changes from the CHANGELOG.md file
+
 ## [1.1.3] - 2025-07-14
 ### Changed
 - ## softcommerce/module-profile-queue [1.1.2] - **Enhancement**: Included `servicepoint` type to account for `pakshop` facility.
