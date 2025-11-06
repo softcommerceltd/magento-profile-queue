@@ -23,11 +23,6 @@ use SoftCommerce\ProfileQueue\Model\ResourceModel\Queue\ListingFactory;
 class QueueListingDataProvider extends AbstractDataProvider
 {
     /**
-     * @var PoolInterface
-     */
-    private PoolInterface $pool;
-
-    /**
      * @param ListingFactory $listingFactory
      * @param PoolInterface $pool
      * @param string $name
@@ -39,7 +34,7 @@ class QueueListingDataProvider extends AbstractDataProvider
      */
     public function __construct(
         ListingFactory $listingFactory,
-        PoolInterface $pool,
+        private readonly PoolInterface $pool,
         string $name,
         string $primaryFieldName,
         string $requestFieldName,
@@ -48,7 +43,6 @@ class QueueListingDataProvider extends AbstractDataProvider
         ?string $profileTypeId = null
     ) {
         $this->collection = $listingFactory->create();
-        $this->pool = $pool;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
 
         if ($profileTypeId) {
