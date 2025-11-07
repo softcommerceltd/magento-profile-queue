@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace SoftCommerce\ProfileQueue\Model;
 
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use SoftCommerce\Core\Model\Trait\ConnectionTrait;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
 use SoftCommerce\ProfileQueue\Api\QueueManagementInterface;
 use SoftCommerce\ProfileQueue\Model\ResourceModel\Queue as ResourceModel;
@@ -19,34 +19,18 @@ use SoftCommerce\ProfileQueue\Model\ResourceModel\Queue as ResourceModel;
  */
 class QueueManagement implements QueueManagementInterface
 {
-    /**
-     * @var AdapterInterface
-     */
-    private AdapterInterface $connection;
+    use ConnectionTrait;
 
     /**
-     * @var ResourceModel
-     */
-    private ResourceModel $resourceModel;
-
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    /**
+     * @param ResourceConnection $resourceConnection
      * @param ResourceModel $resourceModel
      * @param SerializerInterface $serializer
      */
     public function __construct(
-        ResourceModel $resourceModel,
-        // ResourceConnection $resourceConnection,
-        SerializerInterface $serializer
+        private readonly ResourceConnection $resourceConnection,
+        private readonly ResourceModel $resourceModel,
+        private readonly SerializerInterface $serializer
     ) {
-        $this->resourceModel = $resourceModel;
-        $this->connection = $resourceModel->getConnection();
-        // $this->connection = $resourceConnection->getConnection();
-        $this->serializer = $serializer;
     }
 
     /**
@@ -66,8 +50,8 @@ class QueueManagement implements QueueManagementInterface
             QueueInterface::MESSAGE => $this->serializer->serialize($message)
         ];
 
-        return (int) $this->connection->insertOnDuplicate(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->insertOnDuplicate(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             $request
         );
     }
@@ -77,8 +61,8 @@ class QueueManagement implements QueueManagementInterface
      */
     public function removeFromQueueByEntityId(array $entityIds): int
     {
-        return (int) $this->connection->delete(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->delete(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             [QueueInterface::ENTITY_ID . ' IN (?)' => $entityIds]
         );
     }
@@ -88,8 +72,8 @@ class QueueManagement implements QueueManagementInterface
      */
     public function removeFromQueue(array|int|string $subjectEntityId, string $subjectTypeId): int
     {
-        return (int) $this->connection->delete(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->delete(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             [
                 QueueInterface::SUBJECT_TYPE_ID . ' IN (?)' => is_array($subjectEntityId)
                     ? $subjectEntityId
@@ -104,8 +88,8 @@ class QueueManagement implements QueueManagementInterface
      */
     public function removeFromQueueBySubjectTypeId(string $subjectTypeId): int
     {
-        return (int) $this->connection->delete(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->delete(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             [QueueInterface::SUBJECT_TYPE_ID . ' = ?' => $subjectTypeId]
         );
     }
@@ -115,8 +99,8 @@ class QueueManagement implements QueueManagementInterface
      */
     public function clearQueue(): void
     {
-        $this->connection->truncateTable(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME)
+        $this->getConnection()->truncateTable(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME)
         );
     }
 
@@ -125,8 +109,8 @@ class QueueManagement implements QueueManagementInterface
      */
     public function updateQueueStatusByEntityId(array $entityIds, string $status): int
     {
-        return (int) $this->connection->update(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->update(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             [QueueInterface::STATUS => $status],
             [QueueInterface::ENTITY_ID . ' IN (?)' => $entityIds]
         );
@@ -141,8 +125,8 @@ class QueueManagement implements QueueManagementInterface
         string $status
     ): int
     {
-        return (int) $this->connection->update(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->update(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             [QueueInterface::STATUS => $status],
             [
                 QueueInterface::SUBJECT_ENTITY_ID . ' = ?' => $subjectEntityId,
@@ -156,8 +140,8 @@ class QueueManagement implements QueueManagementInterface
      */
     public function updateQueueData(array $bindData, array|string $where): int
     {
-        return (int) $this->connection->update(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->update(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             $bindData,
             $where
         );
@@ -168,8 +152,8 @@ class QueueManagement implements QueueManagementInterface
      */
     public function saveMultipleOnDuplicate(array $data, array $fields = []): int
     {
-        return (int) $this->connection->insertOnDuplicate(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        return (int) $this->getConnection()->insertOnDuplicate(
+            $this->getConnection()->getTableName(QueueInterface::DB_TABLE_NAME),
             $this->resourceModel->buildBatchDataForSave($data),
             $fields
         );

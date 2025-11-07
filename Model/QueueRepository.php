@@ -25,31 +25,6 @@ use SoftCommerce\ProfileQueue\Api\QueueRepositoryInterface;
 class QueueRepository implements QueueRepositoryInterface
 {
     /**
-     * @var QueueFactory
-     */
-    private QueueFactory $modelFactory;
-
-    /**
-     * @var ResourceModel\Queue
-     */
-    private ResourceModel\Queue $resource;
-
-    /**
-     * @var ResourceModel\Queue\CollectionFactory
-     */
-    private ResourceModel\Queue\CollectionFactory $collectionFactory;
-
-    /**
-     * @var QueueSearchResultsInterfaceFactory
-     */
-    private QueueSearchResultsInterfaceFactory $searchResultsFactory;
-
-    /**
-     * @var CollectionProcessorInterface
-     */
-    private CollectionProcessorInterface $collectionProcessor;
-
-    /**
      * @param QueueFactory $modelFactory
      * @param ResourceModel\Queue $resource
      * @param ResourceModel\Queue\CollectionFactory $collectionFactory
@@ -57,17 +32,12 @@ class QueueRepository implements QueueRepositoryInterface
      * @param CollectionProcessorInterface $collectionProcessor
      */
     public function __construct(
-        QueueFactory $modelFactory,
-        ResourceModel\Queue $resource,
-        ResourceModel\Queue\CollectionFactory $collectionFactory,
-        QueueSearchResultsInterfaceFactory $searchResultsFactory,
-        CollectionProcessorInterface $collectionProcessor
+        private readonly QueueFactory $modelFactory,
+        private readonly ResourceModel\Queue $resource,
+        private readonly ResourceModel\Queue\CollectionFactory $collectionFactory,
+        private readonly QueueSearchResultsInterfaceFactory $searchResultsFactory,
+        private readonly CollectionProcessorInterface $collectionProcessor
     ) {
-        $this->modelFactory = $modelFactory;
-        $this->resource = $resource;
-        $this->collectionFactory = $collectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->collectionProcessor = $collectionProcessor;
     }
 
     /**

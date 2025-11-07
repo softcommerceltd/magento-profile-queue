@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace SoftCommerce\ProfileQueue\Cron\Backend;
 
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
 
@@ -22,25 +21,13 @@ class QueueCleanup
     private const HISTORY_LIFETIME = 86400;
 
     /**
-     * @var AdapterInterface
-     */
-    private AdapterInterface $connection;
-
-    /**
-     * @var DateTime
-     */
-    private DateTime $dateTime;
-
-    /**
      * @param DateTime $dateTime
      * @param ResourceConnection $resource
      */
     public function __construct(
-        DateTime $dateTime,
-        ResourceConnection $resource
+        private readonly DateTime $dateTime,
+        private readonly ResourceConnection $resource
     ) {
-        $this->dateTime = $dateTime;
-        $this->connection = $resource->getConnection();
     }
 
     /**
@@ -48,10 +35,11 @@ class QueueCleanup
      */
     public function execute(): void
     {
-        $this->connection->delete(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        $connection = $this->resource->getConnection();
+        $connection->delete(
+            $connection->getTableName(QueueInterface::DB_TABLE_NAME),
             [
-                QueueInterface::UPDATED_AT . ' < ?' => $this->connection->formatDate(
+                QueueInterface::UPDATED_AT . ' < ?' => $connection->formatDate(
                     $this->dateTime->gmtTimestamp() - self::HISTORY_LIFETIME
                 )
             ]

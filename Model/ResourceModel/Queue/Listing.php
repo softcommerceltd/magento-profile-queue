@@ -32,11 +32,6 @@ class Listing extends Collection
     ];
 
     /**
-     * @var RequestInterface
-     */
-    private RequestInterface $request;
-
-    /**
      * @param SerializerInterface $serializer
      * @param RequestInterface $request
      * @param EntityFactoryInterface $entityFactory
@@ -48,15 +43,14 @@ class Listing extends Collection
      */
     public function __construct(
         SerializerInterface $serializer,
-        RequestInterface $request,
+        private readonly RequestInterface $request,
         EntityFactoryInterface $entityFactory,
         LoggerInterface $logger,
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
-        AdapterInterface $connection = null,
-        AbstractDb $resource = null
+        ?AdapterInterface $connection = null,
+        ?AbstractDb $resource = null
     ) {
-        $this->request = $request;
         parent::__construct(
             $serializer,
             $entityFactory,

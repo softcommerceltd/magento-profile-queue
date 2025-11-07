@@ -10,7 +10,6 @@ namespace SoftCommerce\ProfileQueue\Controller\Adminhtml\ProfileQueue;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Ui\Component\MassAction\Filter;
 use SoftCommerce\ProfileQueue\Api\Data\QueueInterface;
 use SoftCommerce\ProfileQueue\Model\ResourceModel\Queue\Listing;
@@ -22,23 +21,17 @@ use SoftCommerce\ProfileQueue\Model\ResourceModel\Queue\ListingFactory;
 class MassDelete extends AbstractMassAction
 {
     /**
-     * @var AdapterInterface
-     */
-    private AdapterInterface $connection;
-
-    /**
      * @param ResourceConnection $resourceConnection
      * @param ListingFactory $collectionFactory
      * @param Filter $filter
      * @param Context $context
      */
     public function __construct(
-        ResourceConnection $resourceConnection,
+        private readonly ResourceConnection $resourceConnection,
         ListingFactory $collectionFactory,
         Filter $filter,
         Context $context
     ) {
-        $this->connection = $resourceConnection->getConnection();
         parent::__construct($collectionFactory, $filter, $context);
     }
 
@@ -48,8 +41,10 @@ class MassDelete extends AbstractMassAction
     protected function massAction(Listing $collection): void
     {
         $ids = $collection->getAllIds();
-        $result = $this->connection->delete(
-            $this->connection->getTableName(QueueInterface::DB_TABLE_NAME),
+        $connection = $this->resourceConnection->getConnection();
+
+        $result = $connection->delete(
+            $connection->getTableName(QueueInterface::DB_TABLE_NAME),
             [
                 QueueInterface::ENTITY_ID . ' IN (?)' => $ids
             ]
