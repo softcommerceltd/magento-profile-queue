@@ -5,5 +5,5 @@ Magento - Profile queue entity module.
 Used to manage profile queue.
 
 ## Support
-Soft Commerce Ltd <br />
-support@softcommerce.co.uk
+Byte8 Ltd <br />
+support@byte8.io

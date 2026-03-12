@@ -1,6 +1,6 @@
 {
     "name": "softcommerce/module-profile-queue",
-    "description": "SoftCommerce -- Magento: Profile Queue Module.",
+    "description": "Byte8 -- Magento: Profile Queue Module.",
     "require": {
         "php": "~8.1.0||~8.2.0||~8.3.0||~8.4.0",
         "softcommerce/module-profile": "*"
