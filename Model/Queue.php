@@ -23,7 +23,7 @@ class Queue extends AbstractModel implements QueueInterface, IdentityInterface
     /**
      * @var string
      */
-    protected $_cacheTag = self::CACHE_TAG;
+    protected $_cacheTag = false;
 
     /**
      * @var string
@@ -43,7 +43,7 @@ class Queue extends AbstractModel implements QueueInterface, IdentityInterface
      */
     public function getIdentities(): array
     {
-        return [self::CACHE_TAG . '_' . $this->getId()];
+        return [];
     }
 
     /**
